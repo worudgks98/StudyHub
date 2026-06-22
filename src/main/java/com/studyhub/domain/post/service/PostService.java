@@ -1,0 +1,71 @@
+package com.studyhub.domain.post.service;
+
+import com.studyhub.domain.member.entity.Member;
+import com.studyhub.domain.member.repository.MemberRepository;
+import com.studyhub.domain.post.dto.PostCreateRequest;
+import com.studyhub.domain.post.dto.PostDetailResponse;
+import com.studyhub.domain.post.dto.PostListResponse;
+import com.studyhub.domain.post.entity.Post;
+import com.studyhub.domain.post.repository.PostRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class PostService {
+    
+    private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    
+    public void create(PostCreateRequest request){
+        
+        Member member = memberRepository.findById(request.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
+        
+        Post post = Post.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .category(request.getCategory())
+                .maxMember(request.getMaxMember())
+                .member(member)
+                .createdAt(LocalDateTime.now())
+                .build();
+        
+        postRepository.save(post);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostListResponse> getPosts(){
+
+        return postRepository.findAll()
+                .stream()
+                .map(post -> PostListResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .nickname(post.getMember().getNickname())
+                        .category(post.getCategory())
+                        .build())
+                .toList();
+
+    }
+
+    @Transactional(readOnly = true)
+    public PostDetailResponse getPost(Long postId){
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글 없음"));
+
+        return PostDetailResponse.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .nickname(post.getMember().getNickname())
+                .category(post.getCategory())
+                .maxMember(post.getMaxMember())
+                .build();
+    }
+}
