@@ -56,4 +56,14 @@ public class PostController {
         return "게시글 수정 완료";
     }
 
+    @DeleteMapping("/{postId}")
+    public String deletePost(@PathVariable Long postId,Authentication authentication){
+
+        Long memberId = (Long) authentication.getPrincipal();
+
+        postService.delete(postId,memberId);
+
+        return "게시글 삭제 완료";
+    }
+
 }

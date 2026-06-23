@@ -87,4 +87,16 @@ public class PostService {
                 request.getMaxMember()
         );
     }
+    @Transactional
+    public void delete(Long postId,Long memberId){
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(()-> new IllegalArgumentException("게시글 없음"));
+
+        if(!post.getMember().getId().equals(memberId)){
+            throw new IllegalArgumentException("작성자만 삭제 가능");
+        }
+
+        postRepository.delete(post);
+    }
 }
