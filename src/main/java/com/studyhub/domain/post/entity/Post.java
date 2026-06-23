@@ -31,4 +31,12 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void update(String title,String content,String category,Integer maxMember){
+
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.maxMember = maxMember;
+    }
 }

@@ -5,6 +5,7 @@ import com.studyhub.domain.member.repository.MemberRepository;
 import com.studyhub.domain.post.dto.PostCreateRequest;
 import com.studyhub.domain.post.dto.PostDetailResponse;
 import com.studyhub.domain.post.dto.PostListResponse;
+import com.studyhub.domain.post.dto.PostUpdateRequest;
 import com.studyhub.domain.post.entity.Post;
 import com.studyhub.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -67,5 +68,23 @@ public class PostService {
                 .category(post.getCategory())
                 .maxMember(post.getMaxMember())
                 .build();
+    }
+
+    @Transactional
+    public void update(Long postId, Long memberId, PostUpdateRequest request){
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(()-> new IllegalArgumentException("게시글 없음"));
+
+        if(!post.getMember().getId().equals(memberId)){
+            throw new IllegalArgumentException("작성자만 수정 가능");
+        }
+
+        post.update(
+                request.getTitle(),
+                request.getContent(),
+                request.getCategory(),
+                request.getMaxMember()
+        );
     }
 }
