@@ -21,9 +21,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     
-    public void create(PostCreateRequest request){
+    public void create(PostCreateRequest request,Long memberId){
         
-        Member member = memberRepository.findById(request.getMemberId())
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
         
         Post post = Post.builder()

@@ -10,5 +10,4 @@ public class PostCreateRequest {
     private String category;
     private Integer maxMember;
 
-    private Long memberId;
 }

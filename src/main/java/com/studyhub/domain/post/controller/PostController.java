@@ -6,6 +6,7 @@ import com.studyhub.domain.post.dto.PostListResponse;
 import com.studyhub.domain.post.service.PostService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +19,15 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public String createPost(@RequestBody PostCreateRequest request) {
+    public String createPost(
+            @RequestBody PostCreateRequest request,
+            Authentication authentication){
 
-        postService.create(request);
+        Long memberId = (Long) authentication.getPrincipal();
 
-        return "게시글 작성 성공";
+        postService.create(request, memberId);
+
+        return "게시글 작성 완료";
     }
 
     @GetMapping
