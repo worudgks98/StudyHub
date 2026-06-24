@@ -32,4 +32,11 @@ public class Application {
     private String status;
 
     private LocalDateTime createdAt;
+
+    public void approve(){
+        this.status = "APPROVED";
+    }
+    public void reject(){
+        this.status = "REJECTED";
+    }
 }

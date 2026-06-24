@@ -1,5 +1,6 @@
 package com.studyhub.domain.application.service;
 
+import com.studyhub.domain.application.dto.ApplicationResponse;
 import com.studyhub.domain.application.entity.Application;
 import com.studyhub.domain.application.repository.ApplicationRepository;
 import com.studyhub.domain.member.entity.Member;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,5 +43,48 @@ public class ApplicationService {
                 .build();
 
         applicationRepository.save(application);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ApplicationResponse> getApplications(Long postId) {
+
+        return applicationRepository.findByPostId(postId)
+                .stream()
+                .map(application ->
+                        ApplicationResponse.builder()
+                                .memberId(
+                                        application.getMember().getId()
+                                )
+                                .nickname(
+                                        application.getMember().getNickname()
+                                )
+                                .status(
+                                        application.getStatus()
+                                )
+                                .build()
+                )
+                .toList();
+    }
+
+    @Transactional
+    public void approve(Long applicationId) {
+
+        Application application =
+                applicationRepository.findById(applicationId)
+                        .orElseThrow(()-> new IllegalArgumentException("지원 내역 없음"));
+
+        application.approve();
+
+    }
+
+    @Transactional
+    public void reject(Long applicationId) {
+
+        Application application =
+                applicationRepository.findById(applicationId)
+                        .orElseThrow(()-> new IllegalArgumentException("지원 내역 없음"));
+
+        application.reject();
+
     }
 }

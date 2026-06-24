@@ -1,9 +1,13 @@
 package com.studyhub.domain.application.controller;
 
+import com.studyhub.domain.application.dto.ApplicationResponse;
 import com.studyhub.domain.application.service.ApplicationService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/applications")
@@ -24,17 +28,26 @@ public class ApplicationController {
 
         return "지원 완료";
     }
-    @GetMapping("/test")
-    public String test(){
-        return "success";
+
+    @GetMapping("/post/{postId}")
+    public List<ApplicationResponse> getApplicationsByPostId(@PathVariable Long postId) {
+
+        return applicationService.getApplications(postId);
     }
-    @GetMapping("/whoami")
-    public Object whoami(Authentication authentication) {
 
-        if(authentication == null){
-            return "authentication null";
-        }
+    @PatchMapping("/{applicationId}/approve")
+    public String approve(@PathVariable Long applicationId) {
 
-        return authentication.getPrincipal();
+        applicationService.approve(applicationId);
+
+        return "승인 완료";
+    }
+
+    @PatchMapping("/{applicationId}/reject")
+    public String reject(@PathVariable Long applicationId) {
+
+        applicationService.reject(applicationId);
+
+        return "거절 완료";
     }
 }
