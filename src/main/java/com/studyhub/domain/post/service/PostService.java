@@ -6,6 +6,7 @@ import com.studyhub.domain.post.dto.PostCreateRequest;
 import com.studyhub.domain.post.dto.PostDetailResponse;
 import com.studyhub.domain.post.dto.PostListResponse;
 import com.studyhub.domain.post.dto.PostUpdateRequest;
+import com.studyhub.domain.post.entity.MyPostResponse;
 import com.studyhub.domain.post.entity.Post;
 import com.studyhub.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -98,5 +99,20 @@ public class PostService {
         }
 
         postRepository.delete(post);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MyPostResponse> getMyPosts(Long memberId){
+
+        return postRepository.findByMemberId(memberId)
+                .stream()
+                .map(post ->
+                        MyPostResponse.builder()
+                                .id(post.getId())
+                                .title(post.getTitle())
+                                .category(post.getCategory())
+                                .build()
+                )
+                .toList();
     }
 }
