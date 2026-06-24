@@ -67,22 +67,41 @@ public class ApplicationService {
     }
 
     @Transactional
-    public void approve(Long applicationId) {
+    public void approve(Long applicationId,Long memberId) {
+
+        System.out.println("approve 진입");
+        System.out.println("memberId = " + memberId);
 
         Application application =
                 applicationRepository.findById(applicationId)
                         .orElseThrow(()-> new IllegalArgumentException("지원 내역 없음"));
+
+        if(!application.getPost()
+                .getMember()
+                .getId()
+                .equals(memberId)) {
+
+            throw new IllegalArgumentException("작성자만 승인 가능합니다.");
+        }
 
         application.approve();
 
     }
 
     @Transactional
-    public void reject(Long applicationId) {
+    public void reject(Long applicationId,Long memberId) {
 
         Application application =
                 applicationRepository.findById(applicationId)
                         .orElseThrow(()-> new IllegalArgumentException("지원 내역 없음"));
+
+        if(!application.getPost()
+                .getMember()
+                .getId()
+                .equals(memberId)) {
+
+            throw new IllegalArgumentException("작성자만 거절 가능합니다.");
+        }
 
         application.reject();
 

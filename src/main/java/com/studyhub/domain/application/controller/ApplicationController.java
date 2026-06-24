@@ -36,17 +36,21 @@ public class ApplicationController {
     }
 
     @PatchMapping("/{applicationId}/approve")
-    public String approve(@PathVariable Long applicationId) {
+    public String approve(@PathVariable Long applicationId,Authentication authentication) {
 
-        applicationService.approve(applicationId);
+        Long memberId = (Long) authentication.getPrincipal();
+
+        applicationService.approve(applicationId,memberId);
 
         return "승인 완료";
     }
 
     @PatchMapping("/{applicationId}/reject")
-    public String reject(@PathVariable Long applicationId) {
+    public String reject(@PathVariable Long applicationId,Authentication authentication) {
 
-        applicationService.reject(applicationId);
+        Long memberId = (Long) authentication.getPrincipal();
+
+        applicationService.reject(applicationId,memberId);
 
         return "거절 완료";
     }
