@@ -75,4 +75,14 @@ public class PostController {
         return postService.getMyPosts(memberId);
     }
 
+    @PatchMapping("/{postId}/close")
+    public String closePost(@PathVariable Long postId,Authentication authentication){
+
+        Long memberId = (Long) authentication.getPrincipal();
+
+        postService.closePost(postId,memberId);
+
+        return "모집 마감 완료";
+    }
+
 }

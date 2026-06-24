@@ -33,6 +33,7 @@ public class PostService {
                 .content(request.getContent())
                 .category(request.getCategory())
                 .maxMember(request.getMaxMember())
+                .closed(false)
                 .member(member)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -114,5 +115,18 @@ public class PostService {
                                 .build()
                 )
                 .toList();
+    }
+
+    @Transactional
+    public void closePost(Long postId,Long memberId){
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(()-> new IllegalArgumentException("게시글 없음"));
+
+        if(!post.getMember().getId().equals(memberId)){
+            throw new IllegalArgumentException("작성자만 마감 가능합니다.");
+        }
+
+        post.close();
     }
 }

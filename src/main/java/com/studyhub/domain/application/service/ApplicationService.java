@@ -36,6 +36,10 @@ public class ApplicationService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 없음"));
 
+        if(post.isClosed()){
+            throw new IllegalArgumentException("모집이 마감되었습니다.");
+        }
+
         Application application = Application.builder()
                 .member(member)
                 .post(post)

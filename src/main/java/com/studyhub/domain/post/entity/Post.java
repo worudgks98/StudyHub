@@ -26,6 +26,8 @@ public class Post {
 
     private Integer maxMember;
 
+    private boolean closed;
+
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,5 +40,8 @@ public class Post {
         this.content = content;
         this.category = category;
         this.maxMember = maxMember;
+    }
+    public void close(){
+        this.closed = true;
     }
 }
