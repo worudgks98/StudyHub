@@ -1,6 +1,7 @@
 package com.studyhub.domain.application.service;
 
 import com.studyhub.domain.application.dto.ApplicationResponse;
+import com.studyhub.domain.application.dto.MyApplicationResponse;
 import com.studyhub.domain.application.entity.Application;
 import com.studyhub.domain.application.repository.ApplicationRepository;
 import com.studyhub.domain.member.entity.Member;
@@ -122,5 +123,27 @@ public class ApplicationService {
 
         applicationRepository.delete(application);
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<MyApplicationResponse> getMyApplications(
+            Long memberId) {
+
+        return applicationRepository.findByMemberId(memberId)
+                .stream()
+                .map(application ->
+                        MyApplicationResponse.builder()
+                                .postId(
+                                        application.getPost().getId()
+                                )
+                                .title(
+                                        application.getPost().getTitle()
+                                )
+                                .status(
+                                        application.getStatus()
+                                )
+                                .build()
+                )
+                .toList();
     }
 }

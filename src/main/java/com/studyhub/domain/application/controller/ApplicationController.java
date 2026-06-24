@@ -1,6 +1,7 @@
 package com.studyhub.domain.application.controller;
 
 import com.studyhub.domain.application.dto.ApplicationResponse;
+import com.studyhub.domain.application.dto.MyApplicationResponse;
 import com.studyhub.domain.application.service.ApplicationService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -63,5 +64,13 @@ public class ApplicationController {
         applicationService.cancel(applicationId,memberId);
 
         return "지원 취소 완료";
+    }
+
+    @GetMapping("/my")
+    public List<MyApplicationResponse> getMyApplications(Authentication authentication) {
+
+        Long memberId = (Long) authentication.getPrincipal();
+
+        return applicationService.getMyApplications(memberId);
     }
 }
