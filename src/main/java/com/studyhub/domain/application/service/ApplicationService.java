@@ -106,4 +106,21 @@ public class ApplicationService {
         application.reject();
 
     }
+
+    @Transactional
+    public void cancel(Long applicationId,Long memberId){
+
+        Application application =
+                applicationRepository.findById(applicationId)
+                        .orElseThrow(() -> new IllegalArgumentException("지원 내역 없음"));
+
+        if(!application.getMember()
+                .getId().equals(memberId)) {
+
+            throw new IllegalArgumentException("본인 지원만 취소가능합니다.");
+        }
+
+        applicationRepository.delete(application);
+
+    }
 }

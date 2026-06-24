@@ -54,4 +54,14 @@ public class ApplicationController {
 
         return "거절 완료";
     }
+
+    @DeleteMapping("/{applicationId}")
+    public String cancel(@PathVariable Long applicationId,Authentication authentication) {
+
+        Long memberId = (Long) authentication.getPrincipal();
+
+        applicationService.cancel(applicationId,memberId);
+
+        return "지원 취소 완료";
+    }
 }
