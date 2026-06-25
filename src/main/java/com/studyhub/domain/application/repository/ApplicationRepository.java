@@ -13,4 +13,5 @@ public interface ApplicationRepository extends JpaRepository<Application,Long> {
 
     List<Application> findByMemberId(Long memberId);
 
+    long countByPostIdAndStatus(Long postId, String status);
 }

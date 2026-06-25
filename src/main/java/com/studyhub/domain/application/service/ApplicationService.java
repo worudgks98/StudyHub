@@ -91,6 +91,24 @@ public class ApplicationService {
 
         application.approve();
 
+        long approvedCount =
+                applicationRepository
+                        .countByPostIdAndStatus(
+                                application.getPost().getId(),
+                                "APPROVED"
+                        );
+
+        System.out.println("승인수 =" + approvedCount);
+        System.out.println("정원 =" + application.getPost().getMaxMember());
+
+        if(approvedCount >=
+                application.getPost().getMaxMember()) {
+
+            System.out.println("모집 마감 실행");
+
+            application.getPost().close();
+        }
+
     }
 
     @Transactional
