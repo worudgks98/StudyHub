@@ -4,6 +4,7 @@ import com.studyhub.domain.application.dto.ApplicationResponse;
 import com.studyhub.domain.application.dto.MyApplicationResponse;
 import com.studyhub.domain.application.entity.Application;
 import com.studyhub.domain.application.repository.ApplicationRepository;
+import com.studyhub.domain.chat.service.ChatService;
 import com.studyhub.domain.member.entity.Member;
 import com.studyhub.domain.member.repository.MemberRepository;
 import com.studyhub.domain.post.entity.Post;
@@ -22,6 +23,7 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final ChatService chatService;
 
     @Transactional
     public void apply(Long memberId, Long postId) {
@@ -90,6 +92,10 @@ public class ApplicationService {
         }
 
         application.approve();
+
+        chatService.createChatRoom(application.getPost());
+
+        chatService.addMemberToChatRoom(application.getPost(),application.getMember());
 
         long approvedCount =
                 applicationRepository
