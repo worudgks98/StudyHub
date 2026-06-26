@@ -1,7 +1,14 @@
 package com.studyhub.domain.chat.repository;
 
 import com.studyhub.domain.chat.entity.ChatMember;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ChatMemberRepository extends CrudRepository<ChatMember, Long> {
+import java.util.List;
+
+
+public interface ChatMemberRepository extends JpaRepository<ChatMember, Long> {
+
+    boolean existsByChatRoomIdAndMemberId(Long roomId, Long memberId);
+
+    List<ChatMember> findByMemberId(Long memberId);
 }

@@ -21,7 +21,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/members/signup",
-                                "/api/members/login"
+                                "/api/members/login",
+                                "/chat-test.html",
+                                "/ws/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

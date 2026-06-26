@@ -2,6 +2,7 @@ package com.studyhub.domain.chat.controller;
 
 import com.studyhub.domain.chat.dto.ChatMessageRequest;
 import com.studyhub.domain.chat.dto.ChatMessageResponse;
+import com.studyhub.domain.chat.dto.ChatRoomResponse;
 import com.studyhub.domain.chat.entity.ChatMessage;
 import com.studyhub.domain.chat.service.ChatService;
 import lombok.Getter;
@@ -38,8 +39,18 @@ public class ChatController {
     }
 
     @GetMapping("/{roomId}/messages")
-    public List<ChatMessageResponse> getMessages(@PathVariable Long roomId) {
+    public List<ChatMessageResponse> getMessages(@PathVariable Long roomId,Authentication authentication) {
 
-        return chatService.getMessages(roomId);
+        Long memberId = (Long) authentication.getPrincipal();
+
+        return chatService.getMessages(roomId, memberId);
+    }
+
+    @GetMapping("/rooms")
+    public List<ChatRoomResponse> getMyChatRooms(Authentication authentication) {
+
+        Long memberId = (Long) authentication.getPrincipal();
+
+        return chatService.getMyChatRooms(memberId);
     }
 }

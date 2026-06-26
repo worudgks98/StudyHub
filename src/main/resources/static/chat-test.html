@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Test</title>
+</head>
+<body>
+
+<h2>채팅 테스트</h2>
+
+<input type="number" id="roomId" placeholder="채팅방 번호" value="1">
+<input type="text" id="sender" placeholder="이름">
+<input type="text" id="message" placeholder="메시지">
+
+<button onclick="connect()">채팅방 입장</button>
+<button onclick="sendMessage()">전송</button>
+
+<ul id="chat"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script>
+
+    let stompClient = null;
+    let roomId = null;
+
+    function connect() {
+
+        roomId = document.getElementById("roomId").value;
+
+        const socket = new SockJS('/ws');
+
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function () {
+
+            console.log("연결 성공");
+
+            stompClient.subscribe(
+                '/topic/chat/' + roomId,
+                function (message) {
+
+                    const data = JSON.parse(message.body);
+
+                    const li = document.createElement("li");
+
+                    li.innerText =
+                        data.sender + " : " + data.message;
+
+                    document
+                        .getElementById("chat")
+                        .appendChild(li);
+                }
+            );
+        });
+    }
+
+    function sendMessage() {
+
+        if (!stompClient) {
+            alert("먼저 채팅방 입장을 눌러주세요.");
+            return;
+        }
+
+        const sender =
+            document.getElementById("sender").value;
+
+        const message =
+            document.getElementById("message").value;
+
+        stompClient.send(
+            "/app/chat",
+            {},
+            JSON.stringify({
+                roomId: Number(roomId),
+                memberId: 2,
+                sender: sender,
+                message: message
+            })
+        );
+
+        document.getElementById("message").value = "";
+    }
+
+</script>
+
+</body>
+</html>

@@ -10,9 +10,11 @@ import com.studyhub.domain.post.entity.MyPostResponse;
 import com.studyhub.domain.post.entity.Post;
 import com.studyhub.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -129,4 +131,27 @@ public class PostService {
 
         post.close();
     }
+
+    @Transactional(readOnly = true)
+    public Page<PostListResponse> searchPosts(
+            String keyword,
+            Pageable pageable) {
+
+        Page<Post> posts =
+                postRepository.findByTitleContaining(
+                        keyword,
+                        pageable
+                );
+
+        return posts.map(post ->
+                PostListResponse.builder()
+                        .id(post.getId())
+                        .title(post.getTitle())
+                        .nickname(post.getMember().getNickname())
+                        .category(post.getCategory())
+                        .build()
+        );
+    }
+
+
 }

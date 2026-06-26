@@ -6,8 +6,10 @@ import com.studyhub.domain.post.dto.PostListResponse;
 import com.studyhub.domain.post.dto.PostUpdateRequest;
 import com.studyhub.domain.post.entity.MyPostResponse;
 import com.studyhub.domain.post.service.PostService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +25,7 @@ public class PostController {
     @PostMapping
     public String createPost(
             @RequestBody PostCreateRequest request,
-            Authentication authentication){
+            Authentication authentication) {
 
         Long memberId = (Long) authentication.getPrincipal();
 
@@ -33,42 +35,58 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostListResponse> getPost(){
+    public Page<PostListResponse> getPosts(
 
-        return postService.getPosts();
+            @RequestParam(defaultValue = "")
+            String keyword,
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "10")
+            int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return postService.searchPosts(
+                keyword,
+                pageable
+        );
     }
 
-    @GetMapping("{postId}")
-    public PostDetailResponse getPost(@PathVariable("postId") Long postId){
+    @GetMapping("/{postId}")
+    public PostDetailResponse getPost(@PathVariable Long postId) {
 
         return postService.getPost(postId);
     }
 
     @PutMapping("/{postId}")
-    public String updatePost(@PathVariable Long postId,
-                             @RequestBody PostUpdateRequest request,
-                             Authentication authentication){
+    public String updatePost(
+            @PathVariable Long postId,
+            @RequestBody PostUpdateRequest request,
+            Authentication authentication) {
 
-        Long memberId =
-                (Long) authentication.getPrincipal();
+        Long memberId = (Long) authentication.getPrincipal();
 
-        postService.update(postId,memberId,request);
+        postService.update(postId, memberId, request);
 
         return "게시글 수정 완료";
     }
 
     @DeleteMapping("/{postId}")
-    public String deletePost(@PathVariable Long postId,Authentication authentication){
+    public String deletePost(
+            @PathVariable Long postId,
+            Authentication authentication) {
 
         Long memberId = (Long) authentication.getPrincipal();
 
-        postService.delete(postId,memberId);
+        postService.delete(postId, memberId);
 
         return "게시글 삭제 완료";
     }
 
     @GetMapping("/my")
-    public List<MyPostResponse> getMyPost(Authentication authentication){
+    public List<MyPostResponse> getMyPost(Authentication authentication) {
 
         Long memberId = (Long) authentication.getPrincipal();
 
@@ -76,13 +94,14 @@ public class PostController {
     }
 
     @PatchMapping("/{postId}/close")
-    public String closePost(@PathVariable Long postId,Authentication authentication){
+    public String closePost(
+            @PathVariable Long postId,
+            Authentication authentication) {
 
         Long memberId = (Long) authentication.getPrincipal();
 
-        postService.closePost(postId,memberId);
+        postService.closePost(postId, memberId);
 
         return "모집 마감 완료";
     }
-
 }

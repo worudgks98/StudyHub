@@ -1,6 +1,7 @@
 package com.studyhub.domain.chat.service;
 
 import com.studyhub.domain.chat.dto.ChatMessageResponse;
+import com.studyhub.domain.chat.dto.ChatRoomResponse;
 import com.studyhub.domain.chat.entity.ChatMember;
 import com.studyhub.domain.chat.entity.ChatMessage;
 import com.studyhub.domain.chat.entity.ChatRoom;
@@ -85,7 +86,13 @@ public class ChatService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChatMessageResponse> getMessages(Long roomId){
+    public List<ChatMessageResponse> getMessages(Long roomId,Long memberId){
+
+        if(!chatMemberRepository
+                .existsByChatRoomIdAndMemberId(roomId, memberId)){
+
+            throw new IllegalArgumentException("채팅방 접근 권한이 없습니다.");
+        }
 
         List<ChatMessage> messages =
                 chatMessageRepository
@@ -97,6 +104,30 @@ public class ChatService {
                                 .sender(message.getSender().getNickname())
                                 .message(message.getMessage())
                                 .build())
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChatRoomResponse> getMyChatRooms(
+            Long memberId){
+
+        List<ChatMember> chatMembers =
+                chatMemberRepository
+                        .findByMemberId(memberId);
+
+        return chatMembers.stream()
+                .map(chatMember ->
+                        ChatRoomResponse.builder()
+                                .roomId(
+                                        chatMember.getChatRoom().getId()
+                                )
+                                .postTitle(
+                                        chatMember.getChatRoom()
+                                                .getPost()
+                                                .getTitle()
+                                )
+                                .build()
+                )
                 .toList();
     }
 }
