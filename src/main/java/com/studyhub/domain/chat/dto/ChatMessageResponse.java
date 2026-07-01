@@ -7,6 +7,8 @@ import lombok.Getter;
 @Builder
 public class ChatMessageResponse {
 
+    private Long memberId;
+
     private String sender;
 
     private String message;

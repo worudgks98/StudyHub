@@ -59,6 +59,8 @@ public class ApplicationService {
                 .stream()
                 .map(application ->
                         ApplicationResponse.builder()
+                                .applicationId(
+                                        application.getId())
                                 .memberId(
                                         application.getMember().getId()
                                 )
@@ -161,6 +163,8 @@ public class ApplicationService {
                 .stream()
                 .map(application ->
                         MyApplicationResponse.builder()
+                                .applicationId(
+                                        application.getId())
                                 .postId(
                                         application.getPost().getId()
                                 )
@@ -173,5 +177,14 @@ public class ApplicationService {
                                 .build()
                 )
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkApplication(Long memberId, Long postId) {
+
+        return applicationRepository.existsByMemberIdAndPostId(
+                memberId,
+                postId
+        );
     }
 }

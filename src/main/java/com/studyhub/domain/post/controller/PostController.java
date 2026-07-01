@@ -37,21 +37,17 @@ public class PostController {
     @GetMapping
     public Page<PostListResponse> getPosts(
 
-            @RequestParam(defaultValue = "")
-            String keyword,
+            @RequestParam(defaultValue = "") String keyword,
 
-            @RequestParam(defaultValue = "0")
-            int page,
+            @RequestParam(defaultValue = "") String category,
 
-            @RequestParam(defaultValue = "10")
-            int size) {
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        return postService.searchPosts(
-                keyword,
-                pageable
-        );
+        return postService.getPosts(keyword,category, pageable);
     }
 
     @GetMapping("/{postId}")

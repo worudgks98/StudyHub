@@ -101,6 +101,7 @@ public class ChatService {
         return messages.stream()
                 .map(message ->
                         ChatMessageResponse.builder()
+                                .memberId(message.getSender().getId())
                                 .sender(message.getSender().getNickname())
                                 .message(message.getMessage())
                                 .build())

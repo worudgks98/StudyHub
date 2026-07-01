@@ -1,0 +1,28 @@
+.chatroom-container{
+    max-width:800px;
+    margin:40px auto;
+}
+
+.chatroom-card{
+    background:white;
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:20px;
+    margin-bottom:20px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.chatroom-card:hover{
+    box-shadow:0 6px 15px rgba(0,0,0,.15);
+}
+
+.chatroom-card button{
+    margin-top:15px;
+    padding:8px 16px;
+    background:#215E21;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}

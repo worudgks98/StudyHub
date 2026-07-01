@@ -1,6 +1,7 @@
 package com.studyhub.domain.member.service;
 
 import com.studyhub.domain.member.dto.LoginRequest;
+import com.studyhub.domain.member.dto.LoginResponse;
 import com.studyhub.domain.member.dto.SignupRequest;
 import com.studyhub.domain.member.entity.Member;
 import com.studyhub.domain.member.repository.MemberRepository;
@@ -38,21 +39,23 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public String login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
 
         Member member = memberRepository
                 .findByEmail(request.getEmail())
-                .orElseThrow(()->
+                .orElseThrow(() ->
                         new IllegalArgumentException("회원 없음"));
 
-        if(!passwordEncoder.matches(
+        if (!passwordEncoder.matches(
                 request.getPassword(),
                 member.getPassword())) {
 
             throw new IllegalArgumentException("비밀번호 불일치");
         }
 
-        return jwtUtil.createToken(member.getId());
-
+        return new LoginResponse(
+                jwtUtil.createToken(member.getId()),
+                member.getId()
+        );
     }
 }

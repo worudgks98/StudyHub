@@ -11,4 +11,8 @@ public class PostListResponse {
     private String title;
     private String nickname;
     private String category;
+    private boolean closed;
+
+    private Integer maxMember;
+    private Long approvedCount;
 }

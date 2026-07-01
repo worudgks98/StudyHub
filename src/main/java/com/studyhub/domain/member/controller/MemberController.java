@@ -1,6 +1,7 @@
 package com.studyhub.domain.member.controller;
 
 import com.studyhub.domain.member.dto.LoginRequest;
+import com.studyhub.domain.member.dto.LoginResponse;
 import com.studyhub.domain.member.dto.SignupRequest;
 import com.studyhub.domain.member.entity.Member;
 import com.studyhub.domain.member.service.MemberService;
@@ -30,7 +31,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@RequestBody LoginRequest request) {
 
         return memberService.login(request);
     }

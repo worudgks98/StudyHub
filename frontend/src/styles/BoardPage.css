@@ -1,0 +1,31 @@
+.board-container {
+
+    width: 900px;
+
+    margin: 50px auto;
+
+}
+
+.board-title {
+
+    text-align: center;
+
+    color: #215E21;
+
+    font-size: 34px;
+
+    font-weight: bold;
+
+    margin-bottom: 40px;
+
+}
+
+.board-container hr {
+
+    border: none;
+
+    border-top: 1px solid #ececec;
+
+    margin: 30px 0;
+
+}

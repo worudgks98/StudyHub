@@ -1,5 +1,6 @@
 package com.studyhub.domain.post.service;
 
+import com.studyhub.domain.application.repository.ApplicationRepository;
 import com.studyhub.domain.member.entity.Member;
 import com.studyhub.domain.member.repository.MemberRepository;
 import com.studyhub.domain.post.dto.PostCreateRequest;
@@ -23,6 +24,7 @@ import java.util.List;
 public class PostService {
     
     private final PostRepository postRepository;
+    private final ApplicationRepository applicationRepository;
     private final MemberRepository memberRepository;
     
     public void create(PostCreateRequest request,Long memberId){
@@ -44,18 +46,54 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostListResponse> getPosts(){
+    public Page<PostListResponse> getPosts(
+            String keyword,
+            String category,
+            org.springframework.data.domain.Pageable pageable) {
 
-        return postRepository.findAll()
-                .stream()
-                .map(post -> PostListResponse.builder()
-                        .id(post.getId())
-                        .title(post.getTitle())
-                        .nickname(post.getMember().getNickname())
-                        .category(post.getCategory())
-                        .build())
-                .toList();
+        Page<Post> posts;
 
+        if ((keyword == null || keyword.isBlank())
+                && (category == null || category.isBlank())) {
+
+            posts = postRepository.findAll(pageable);
+
+        } else if (category == null || category.isBlank()) {
+
+            posts = postRepository.findByTitleContaining(
+                    keyword,
+                    pageable
+            );
+
+        } else {
+
+            posts = postRepository.findByCategoryAndTitleContaining(
+                    category,
+                    keyword,
+                    pageable
+            );
+
+        }
+
+        return posts.map(post -> {
+
+            Long approvedCount =
+                    applicationRepository.countByPostIdAndStatus(
+                            post.getId(),
+                            "APPROVED"
+                    );
+
+            return PostListResponse.builder()
+                    .id(post.getId())
+                    .title(post.getTitle())
+                    .nickname(post.getMember().getNickname())
+                    .category(post.getCategory())
+                    .closed(post.isClosed())
+                    .maxMember(post.getMaxMember())
+                    .approvedCount(approvedCount)
+                    .build();
+
+        });
     }
 
     @Transactional(readOnly = true)
@@ -64,13 +102,21 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 없음"));
 
+        Long approvedCount =
+                applicationRepository.countByPostIdAndStatus(
+                        postId,
+                        "APPROVED"
+                );
+
         return PostDetailResponse.builder()
                 .id(post.getId())
+                .memberId(post.getMember().getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .nickname(post.getMember().getNickname())
                 .category(post.getCategory())
                 .maxMember(post.getMaxMember())
+                .approvedCount(approvedCount)
                 .build();
     }
 
@@ -105,17 +151,29 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<MyPostResponse> getMyPosts(Long memberId){
+    public List<MyPostResponse> getMyPosts(Long memberId) {
 
-        return postRepository.findByMemberId(memberId)
-                .stream()
-                .map(post ->
-                        MyPostResponse.builder()
-                                .id(post.getId())
-                                .title(post.getTitle())
-                                .category(post.getCategory())
-                                .build()
-                )
+        List<Post> posts = postRepository.findByMemberId(memberId);
+
+        return posts.stream()
+                .map(post -> {
+
+                    Long currentMember =
+                            applicationRepository.countByPostIdAndStatus(
+                                    post.getId(),
+                                    "APPROVED"
+                            );
+
+                    return MyPostResponse.builder()
+                            .id(post.getId())
+                            .title(post.getTitle())
+                            .category(post.getCategory())
+                            .maxMember(post.getMaxMember())
+                            .currentMember(currentMember)
+                            .closed(post.isClosed())
+                            .createdAt(post.getCreatedAt())
+                            .build();
+                })
                 .toList();
     }
 

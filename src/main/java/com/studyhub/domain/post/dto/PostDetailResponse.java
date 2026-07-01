@@ -9,6 +9,8 @@ public class PostDetailResponse {
 
     private Long id;
 
+    private Long memberId;
+
     private String title;
 
     private String content;
@@ -18,4 +20,6 @@ public class PostDetailResponse {
     private String category;
 
     private Integer maxMember;
+
+    private Long approvedCount;
 }

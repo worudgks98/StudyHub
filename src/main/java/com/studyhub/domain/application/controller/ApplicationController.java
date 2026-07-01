@@ -73,4 +73,15 @@ public class ApplicationController {
 
         return applicationService.getMyApplications(memberId);
     }
+
+    @GetMapping("/check/{postId}")
+    public boolean checkApplication(
+            @PathVariable Long postId,
+            Authentication authentication) {
+
+        Long memberId = (Long) authentication.getPrincipal();
+
+        return applicationService.checkApplication(memberId, postId);
+    }
+
 }

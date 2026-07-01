@@ -12,4 +12,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByMemberId(Long memberId);
 
     Page<Post> findByTitleContaining(String keyword, Pageable pageable);
+
+    Page<Post> findByCategoryAndTitleContaining(
+            String category,
+            String keyword,
+            Pageable pageable
+    );
 }
